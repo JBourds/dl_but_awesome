@@ -1,42 +1,53 @@
-pub trait Numeric {}
-impl Numeric for f32 {}
+pub use internal::{Matrix, Shape};
 
-#[derive(Debug, PartialEq)]
-struct Shape(Vec<usize>);
+#[allow(dead_code)]
+pub mod internal {
+    pub trait Numeric {}
+    impl Numeric for f32 {}
 
-impl Shape {
-    pub fn len(&self) -> usize {
-        self.0.iter().product()
-    }
-}
+    #[derive(Debug, PartialEq)]
+    pub struct Shape(Vec<usize>);
 
-#[derive(Debug, PartialEq)]
-struct Matrix<T> {
-    data: Vec<T>,
-    shape: Shape,
-}
-
-impl<T: Numeric + Copy> Matrix<T> {
-    fn new_uninit(shape: Shape) -> Self {
-        Self {
-            data: Vec::with_capacity(shape.len()),
-            shape,
+    impl Shape {
+        pub fn new(dimensions: Vec<usize>) -> Self {
+            Self(dimensions)
+        }
+        pub fn len(&self) -> usize {
+            self.0.iter().product()
+        }
+        pub fn is_empty(&self) -> bool {
+            self.len() == 0
         }
     }
-    fn default(value: T, shape: Shape) -> Self {
-        Self {
-            data: vec![value; shape.len()],
-            shape,
+
+    #[derive(Debug, PartialEq)]
+    pub struct Matrix<T> {
+        data: Vec<T>,
+        shape: Shape,
+    }
+
+    impl<T: Numeric + Copy> Matrix<T> {
+        pub fn new_uninit(shape: Shape) -> Self {
+            Self {
+                data: Vec::with_capacity(shape.len()),
+                shape,
+            }
+        }
+        pub fn default(value: T, shape: Shape) -> Self {
+            Self {
+                data: vec![value; shape.len()],
+                shape,
+            }
         }
     }
-}
 
-impl Matrix<f32> {
-    fn zeros(shape: Shape) -> Self {
-        Matrix::<f32>::default(0.0, shape)
-    }
-    fn ones(shape: Shape) -> Self {
-        Matrix::<f32>::default(1.0, shape)
+    impl Matrix<f32> {
+        pub fn zeros(shape: Shape) -> Self {
+            Matrix::<f32>::default(0.0, shape)
+        }
+        pub fn ones(shape: Shape) -> Self {
+            Matrix::<f32>::default(1.0, shape)
+        }
     }
 }
 
@@ -46,11 +57,11 @@ mod tests {
 
     #[test]
     fn new_matrix() {
-        let shape = Shape(vec![5, 5]);
-        let mut m = Matrix::<f32>::new_uninit(shape);
+        let shape = Shape::new(vec![5, 5]);
+        let m = Matrix::<f32>::new_uninit(shape);
         println!("{:#?}", m);
-        let shape = Shape(vec![5, 5]);
-        let mut m = Matrix::<f32>::zeros(shape);
+        let shape = Shape::new(vec![5, 5]);
+        let m = Matrix::<f32>::zeros(shape);
         println!("{:#?}", m);
     }
 }
