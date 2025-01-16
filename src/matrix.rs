@@ -50,7 +50,7 @@ mod tests {
         let mut m = Matrix::<f32>::new_uninit(shape);
         println!("{:#?}", m);
         let shape = Shape(vec![5, 5]);
-        let mut m = Matrix::<f32>::zeroed(shape);
+        let mut m = Matrix::<f32>::zeros(shape);
         println!("{:#?}", m);
     }
 }
